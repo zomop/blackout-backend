@@ -1,0 +1,70 @@
+// This file describes our database tables.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PLAYER
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  role          Role     @default(PLAYER)
+  created_at    DateTime @default(now())
+}
+
+// The in-game character, separate from the login account.
+// A User logs in; a Player has HP, level, XP, and fights monsters.
+model Player {
+  id         String       @id @default(uuid())
+  user_id    String       @unique
+  hp         Int          @default(100)
+  max_hp     Int          @default(100)
+  level      Int          @default(1)
+  xp         Int          @default(0)
+  created_at DateTime     @default(now())
+  runs       DungeonRun[]
+}
+
+// Catalog of monsters. For MVP we just need one to fight.
+model Monster {
+  id          String       @id @default(uuid())
+  name        String
+  max_hp      Int
+  attack_min  Int
+  attack_max  Int
+  xp_reward   Int
+  runs        DungeonRun[]
+}
+
+enum DungeonStatus {
+  IN_PROGRESS
+  WON
+  LOST
+  FLED
+}
+
+// One dungeon combat session: one player vs one monster.
+model DungeonRun {
+  id          String        @id @default(uuid())
+  player_id   String
+  monster_id  String
+  player      Player        @relation(fields: [player_id], references: [id])
+  monster     Monster       @relation(fields: [monster_id], references: [id])
+  player_hp   Int
+  monster_hp  Int
+  status      DungeonStatus @default(IN_PROGRESS)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  @@index([player_id, status])
+}
