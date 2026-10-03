@@ -25,6 +25,13 @@ app.get("/", (_req, res) => {
   res.json({ message: "BLACKOUT backend is running." });
 });
 
+// Lightweight liveness probe for load balancers and container orchestrators.
+// Keep this independent from the database so it can distinguish process health
+// from dependency health.
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
 // This route proves the SERVER can talk to the DATABASE.
 // It counts how many users exist (0 is a perfectly fine answer right now).
 app.get("/health/db", async (_req, res) => {
