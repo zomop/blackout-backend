@@ -9,7 +9,12 @@ const SALT_ROUNDS = 12;
 
 export class AuthError extends Error {}
 
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
 export async function registerUser(email: string, password: string) {
+  email = normalizeEmail(email);
   // 1. Check if this email is already used.
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -37,6 +42,7 @@ export async function registerUser(email: string, password: string) {
 }
 
 export async function loginUser(email: string, password: string) {
+  email = normalizeEmail(email);
   // 1. Find the user by email.
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
