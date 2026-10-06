@@ -16,6 +16,11 @@ export interface AuthPayload {
   role: "PLAYER" | "ADMIN";
 }
 
+function isAuthPayload(value: string | jwt.JwtPayload): value is AuthPayload {
+  return typeof value !== "string" && typeof value.userId === "string"
+    && (value.role === "PLAYER" || value.role === "ADMIN");
+}
+
 // This tells TypeScript that req.user might exist and what shape it has.
 declare global {
   namespace Express {
@@ -35,7 +40,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthPayload;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!isAuthPayload(decoded)) {
+      return res.status(401).json({ status: "error", message: "Invalid or expired token." });
+    }
     req.user = decoded;
     next();
   } catch (error) {
