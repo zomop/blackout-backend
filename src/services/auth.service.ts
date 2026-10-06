@@ -4,8 +4,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../prisma/client";
-
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+import { JWT_SECRET } from "../config/env";
 const SALT_ROUNDS = 12;
 
 export class AuthError extends Error {}
