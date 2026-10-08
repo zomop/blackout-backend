@@ -15,6 +15,13 @@ import dungeonRoutes from "./routes/dungeon.routes";
 dotenv.config();
 
 const app = express();
+app.disable("x-powered-by");
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  next();
+});
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(cors(corsOrigin ? { origin: corsOrigin } : undefined));
 app.use(express.json({ limit: "32kb" }));
