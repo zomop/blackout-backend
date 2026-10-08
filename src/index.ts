@@ -45,6 +45,18 @@ app.get("/health/db", async (_req, res) => {
   }
 });
 
+app.use((_req, res) => {
+  res.status(404).json({ status: "error", message: "Route not found." });
+});
+
+app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (error instanceof SyntaxError) {
+    return res.status(400).json({ status: "error", message: "Malformed JSON request." });
+  }
+  console.error(error);
+  return res.status(500).json({ status: "error", message: "Internal server error." });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`BLACKOUT backend listening on http://localhost:${PORT}`);
