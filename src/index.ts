@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(cors(corsOrigin ? { origin: corsOrigin } : undefined));
-app.use(express.json());
+app.use(express.json({ limit: "32kb" }));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/dungeon", dungeonRoutes);
 
