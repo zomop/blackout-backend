@@ -65,6 +65,17 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`BLACKOUT backend listening on http://localhost:${PORT}`);
 });
+
+async function shutdown(signal: string) {
+  console.log(`Received ${signal}; shutting down.`);
+  server.close(async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+}
+
+process.once("SIGTERM", () => void shutdown("SIGTERM"));
+process.once("SIGINT", () => void shutdown("SIGINT"));
