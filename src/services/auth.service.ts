@@ -32,6 +32,7 @@ export async function registerUser(email: string, password: string) {
   // 4. Create a JWT token so the user is immediately "logged in" after registering.
   const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
     expiresIn: "15m",
+    algorithm: "HS256",
   });
 
   // 5. Return only safe fields — never return password_hash to the client.
@@ -60,6 +61,7 @@ export async function loginUser(email: string, password: string) {
   // 3. Password is correct — issue a fresh JWT token.
   const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
     expiresIn: "15m",
+    algorithm: "HS256",
   });
 
   return {
