@@ -33,11 +33,11 @@ declare global {
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  const match = authHeader?.match(/^Bearer\s+(\S+)$/);
+  if (!match) {
     return res.status(401).json({ status: "error", message: "No token provided." });
   }
-
-  const token = authHeader.split(" ")[1];
+  const token = match[1];
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] });
