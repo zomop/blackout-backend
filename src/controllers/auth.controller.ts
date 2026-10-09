@@ -7,7 +7,7 @@ import { registerUser, loginUser, AuthError } from "../services/auth.service";
 // This describes exactly what a valid register request looks like.
 const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters."),
+  password: z.string().min(8, "Password must be at least 8 characters.").max(128, "Password must be at most 128 characters."),
 });
 
 export async function register(req: Request, res: Response) {
@@ -37,7 +37,7 @@ export async function register(req: Request, res: Response) {
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1, "Password is required."),
+  password: z.string().min(1, "Password is required.").max(128, "Password must be at most 128 characters."),
 });
 
 export async function login(req: Request, res: Response) {
