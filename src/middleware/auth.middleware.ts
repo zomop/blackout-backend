@@ -40,7 +40,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] });
     if (!isAuthPayload(decoded)) {
       return res.status(401).json({ status: "error", message: "Invalid or expired token." });
     }
